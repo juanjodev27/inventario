@@ -10,17 +10,20 @@ import java.util.Optional;
 @Service
 public class ProductoService {
 
+    private static final String MSG_NO_ENCONTRADO  = "Producto no encontrado con el ID proporcionado";
+
     private final ProductoRepository productoRepository;
 
     public ProductoService(ProductoRepository productoRepository){
+
         this.productoRepository = productoRepository;
     }
 
-    public List<Producto> listarProductos(){
+    public List<Producto> listar(){
         return productoRepository.findAll();
     }
 
-    public Producto crearProducto(Producto producto){
+    public Producto crear(Producto producto){
 
         if(productoRepository.findByCodigo(producto.getCodigo()).isPresent()){
             throw new RuntimeException("Ya existe un producto con el código: " + producto.getCodigo());
@@ -28,13 +31,15 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
-    public Optional<Producto> buscarProductoPorId(Long id){
-        return productoRepository.findById(id);
+    public Producto buscarPorId(Long id){
+
+        return productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(MSG_NO_ENCONTRADO));
     }
 
-    public Producto actualizarProductoPorId(Long id, Producto producto){
+    public Producto actualizarPorId(Long id, Producto producto){
         Producto existente = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con ID no encontrado"));
+                .orElseThrow(() -> new RuntimeException(MSG_NO_ENCONTRADO));
 
         existente.setCodigo(producto.getCodigo());
         existente.setNombre(producto.getNombre());
@@ -44,14 +49,14 @@ public class ProductoService {
         return productoRepository.save(existente);
     }
 
-    public void eliminarProducto(Long id) {
+    public void eliminarPorId(Long id) {
         if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("Producto con id no encontrado");
+            throw new RuntimeException(MSG_NO_ENCONTRADO);
         }
         productoRepository.deleteById(id);
     }
 
-    public List<Producto> buscarProductoPorNombre(String nombre){
+    public List<Producto> buscarPorNombre(String nombre){
         return productoRepository.findByNombreContainingIgnoreCase(nombre);
     }
 

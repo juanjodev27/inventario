@@ -21,38 +21,37 @@ public class ProductoController {
 
     @GetMapping
     public ResponseEntity<List<Producto>> listarProductos(){
-        List<Producto> productos = productoService.listarProductos();
+        List<Producto> productos = productoService.listar();
               return ResponseEntity.ok(productos);
     }
 
     @PostMapping
     public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto){
-        Producto productoGuardado = productoService.crearProducto(producto);
+        Producto productoGuardado = productoService.crear(producto);
         return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<Producto> buscarProductoPorId(@PathVariable Long id){
-        Producto producto = productoService.buscarProductoPorId(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID"));
+        Producto producto = productoService.buscarPorId(id);
         return ResponseEntity.ok(producto);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProductoPorId(@PathVariable Long id, @RequestBody Producto producto){
-        Producto productoActualizado = productoService.actualizarProductoPorId(id, producto);
+        Producto productoActualizado = productoService.actualizarPorId(id, producto);
         return ResponseEntity.ok(productoActualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id){
-        productoService.eliminarProducto(id);
+        productoService.eliminarPorId(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/nombre/{nombre}")
     public ResponseEntity<List<Producto>> buscarPorNombre(@PathVariable String nombre){
-        List<Producto> productos = productoService.buscarProductoPorNombre(nombre);
+        List<Producto> productos = productoService.buscarPorNombre(nombre);
         return ResponseEntity.ok(productos);
     }
 
